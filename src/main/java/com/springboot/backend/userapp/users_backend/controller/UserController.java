@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/users")  // Define que todas las rutas que maneja este controlador comienzan con "/api/users"
 public class UserController {
 
-    @Autowired  // Inyecta el servicio de usuarios que contiene la lógica de negocio (interacciones con la base de datos)
+    @Autowired 
+    // Inyecta el servicio de usuarios que contiene la lógica de negocio (interacciones con la base de datos)
+    //Hay que inyectar lo mas generico posible
     private UserService service;
 
     // Método para obtener todos los usuarios (GET /api/users)
@@ -37,10 +39,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         // Busca el usuario por ID
-        Optional<User> userOptional = service.findById(id);
-        
+        Optional<User> userOptional = service.findById(id);   
         // Si el usuario está presente, devuelve el usuario con estado HTTP 200 (OK)
         if(userOptional.isPresent()){
+            //orElseThrow() controla en caso de que userOptional no contenga nada
+            //en este contexto no es necesario ya que en el if ya se controla si esta presente o no
+            //El ResponseEntity convierte el objeto en JSON
            return ResponseEntity.status(HttpStatus.OK).body(userOptional.orElseThrow());
         }
         // Si el usuario no se encuentra, devuelve un mensaje de error con estado HTTP 404 (NOT FOUND)
