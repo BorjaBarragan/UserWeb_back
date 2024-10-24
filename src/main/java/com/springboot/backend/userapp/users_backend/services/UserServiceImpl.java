@@ -3,7 +3,8 @@ package com.springboot.backend.userapp.users_backend.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ public class UserServiceImpl implements UserService {
    
     // Repositorio que interactúa con la base de datos
     private UserRepository repository;
+
 
     // Inyección de dependencias a través del constructor
     public UserServiceImpl(UserRepository repository) {
@@ -31,6 +33,13 @@ public class UserServiceImpl implements UserService {
     // 3-Nombre del metodo
     // 4-Parametros del metodo
     // 5- return si no es void repositorio.metodo(parametro)
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<User> findAll(Pageable pageable) {
+        return this.repository.findAll(pageable);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<User> findAll() {
@@ -55,5 +64,6 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         this.repository.deleteById(id);
     }
+
 
 }
