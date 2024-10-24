@@ -43,13 +43,16 @@ public class UserController {
     // Método para obtener todos los usuarios (GET /api/users)
     @GetMapping
     public List<User> list() {
-        return service.findAll(); // Llama al servicio para obtener todos los usuarios y los devuelve como una
-                                  // lista
+        // Llama al servicio para obtener todos los usuarios y los devuelve como una lista
+        return service.findAll();                            
     }
 
+    // Maneja solicitudes GET en la ruta "/api/users/page/{page}"
     @GetMapping("/page/{page}")
     public Page<User> listPageable(@PathVariable Integer page) {
+        // Crea un objeto Pageable para solicitar la página especificada con 5 usuarios por página
         Pageable pageable = PageRequest.of(page, 5);
+        // Llama al servicio para obtener la lista de usuarios de la página solicitada
         return service.findAll(pageable);
     }
 
@@ -118,29 +121,34 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
- // Método privado que se encarga de validar los resultados de la vinculación de datos
-// y devuelve una respuesta HTTP que incluye los errores de validación si los hay.
-private ResponseEntity<?> validation(BindingResult result) {
-    // Crea un nuevo mapa que almacenará los mensajes de error de validación
-    // 'Map<String, String>' indica que el mapa contendrá pares clave-valor, 
-    // donde la clave es un String (nombre del campo) y el valor es otro String (mensaje de error).
-    Map<String, String> errors = new HashMap<>();
-    // Itera sobre cada error de campo obtenido del resultado de la validación
-    // 'result.getFieldErrors()' devuelve una lista de objetos 'FieldError'
-    // que representan cada error en los campos de un objeto.
-    result.getFieldErrors().forEach(error -> {
-        // 'error.getField()' devuelve el nombre del campo que falló en la validación.
-        // 'error.getDefaultMessage()' devuelve el mensaje de error predeterminado
-        // asociado a esa validación fallida.
-        // Agrega un nuevo par clave-valor al mapa de errores
-        // La clave es el nombre del campo que falló en la validación (error.getField()).
-        // El valor es un mensaje que indica el problema con ese campo (error.getDefaultMessage()).
-        errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
-    });
-    // Devuelve una respuesta HTTP con el estado 400 (Bad Request) y el cuerpo
-    // conteniendo los errores. Esto permite al cliente (frontend) recibir 
-    // información sobre qué salió mal en la solicitud.
-    return ResponseEntity.badRequest().body(errors);
-}
+    // Método privado que se encarga de validar los resultados de la vinculación de
+    // datos
+    // y devuelve una respuesta HTTP que incluye los errores de validación si los
+    // hay.
+    private ResponseEntity<?> validation(BindingResult result) {
+        // Crea un nuevo mapa que almacenará los mensajes de error de validación
+        // 'Map<String, String>' indica que el mapa contendrá pares clave-valor,
+        // donde la clave es un String (nombre del campo) y el valor es otro String
+        // (mensaje de error).
+        Map<String, String> errors = new HashMap<>();
+        // Itera sobre cada error de campo obtenido del resultado de la validación
+        // 'result.getFieldErrors()' devuelve una lista de objetos 'FieldError'
+        // que representan cada error en los campos de un objeto.
+        result.getFieldErrors().forEach(error -> {
+            // 'error.getField()' devuelve el nombre del campo que falló en la validación.
+            // 'error.getDefaultMessage()' devuelve el mensaje de error predeterminado
+            // asociado a esa validación fallida.
+            // Agrega un nuevo par clave-valor al mapa de errores
+            // La clave es el nombre del campo que falló en la validación
+            // (error.getField()).
+            // El valor es un mensaje que indica el problema con ese campo
+            // (error.getDefaultMessage()).
+            errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
+        });
+        // Devuelve una respuesta HTTP con el estado 400 (Bad Request) y el cuerpo
+        // conteniendo los errores. Esto permite al cliente (frontend) recibir
+        // información sobre qué salió mal en la solicitud.
+        return ResponseEntity.badRequest().body(errors);
+    }
 
 }
