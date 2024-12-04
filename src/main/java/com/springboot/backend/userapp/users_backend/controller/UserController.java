@@ -2,6 +2,7 @@ package com.springboot.backend.userapp.users_backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.springboot.backend.userapp.users_backend.entities.User;
+import com.springboot.backend.userapp.users_backend.models.UserRequest;
 import com.springboot.backend.userapp.users_backend.services.UserService;
 
 import jakarta.validation.Valid;
@@ -43,16 +44,19 @@ public class UserController {
     // Método para obtener todos los usuarios (GET /api/users)
     @GetMapping
     public List<User> list() {
-        // Llama al servicio para obtener todos los usuarios y los devuelve como una lista
-        return service.findAll();                            
+        // Llama al servicio para obtener todos los usuarios y los devuelve como una
+        // lista
+        return service.findAll();
     }
 
     // Maneja solicitudes GET en la ruta "/api/users/page/{page}"
     @GetMapping("/page/{page}")
     public Page<User> listPageable(@PathVariable Integer page) {
-        // Crea un objeto Pageable para solicitar la página especificada con 5 usuarios por página
+        // Crea un objeto Pageable para solicitar la página especificada con 5 usuarios
+        // por página
+        // Los métodos «of» restantes exigen como mínimo el número de página y su tamaño
+        // máximo:
         Pageable pageable = PageRequest.of(page, 5);
-        // Llama al servicio para obtener la lista de usuarios de la página solicitada
         return service.findAll(pageable);
     }
 
@@ -86,24 +90,16 @@ public class UserController {
 
     // Método para actualizar un usuario existente (PUT /api/users/{id})
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
+    public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
         if (result.hasErrors()) {
             return validation(result);
         }
         // Busca el usuario por ID
-        Optional<User> userOptional = service.findById(id);
+        Optional<User> userOptional = service.update(user, id);
         // Si el usuario está presente, lo actualiza con los nuevos datos
         if (userOptional.isPresent()) {
-            User userBd = userOptional.get(); // Obtiene el usuario de la base de datos
-            userBd.setName(user.getName()); // Actualiza el nombre
-            userBd.setLastName(user.getLastName()); // Actualiza el apellido
-            userBd.setEmail(user.getEmail()); // Actualiza el email
-            userBd.setUserName(user.getUserName()); // Actualiza el nombre de usuario
-            userBd.setPassword(user.getPassword()); // Actualiza la contraseña
-            return ResponseEntity.ok(service.save(userBd)); // Guarda el usuario actualizado y responde con estado HTTP
-                                                            // 200 (OK)
+            return ResponseEntity.ok(userOptional.orElseThrow());
         }
-        // Si no se encuentra el usuario, devuelve estado HTTP 404 (NOT FOUND)
         return ResponseEntity.notFound().build();
     }
 

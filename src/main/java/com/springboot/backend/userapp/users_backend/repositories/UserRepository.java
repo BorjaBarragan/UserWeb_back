@@ -6,11 +6,12 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.springboot.backend.userapp.users_backend.entities.User;
 
-public interface UserRepository extends CrudRepository <User, Long>{
+import java.util.Optional;
 
-    //1-
-    //PAGINACION
-    //Método personalizado
+public interface UserRepository extends CrudRepository<User, Long> {
+
     Page<User> findAll(Pageable pageable);
+
+    Optional<User> findByUserName(String name);
 
 }
