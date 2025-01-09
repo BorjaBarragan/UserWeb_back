@@ -110,7 +110,8 @@ public class UserController {
         Optional<User> userOptional = service.findById(id);
         // Si el usuario está presente, lo elimina
         if (userOptional.isPresent()) {
-            return ResponseEntity.ok(service.deleteById(id)); // Responde con estado HTTP 204 (NO CONTENT) sin cuerpo
+            service.deleteById(id);
+            return ResponseEntity.noContent().build(); // Responde con estado HTTP 204 (NO CONTENT) sin cuerpo
         }
         // Si no se encuentra el usuario, devuelve estado HTTP 404 (NOT FOUND)
         return ResponseEntity.notFound().build();
